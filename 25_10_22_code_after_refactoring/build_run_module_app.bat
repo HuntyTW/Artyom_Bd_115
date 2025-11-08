@@ -2,8 +2,8 @@
 chcp 1251 > log
 del log
 
-set MAIN=main
-set CPP_FILES="mergesort.cpp mergevstav.cpp main.cpp"
+set MAIN=after_refactoring_4
+set CPP_FILES="after_refactoring_4.cpp"
 set EXE=example
 set CHARSET="-finput-charset=utf-8 -fexec-charset=windows-1251"
 

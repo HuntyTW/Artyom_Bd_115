@@ -1,4 +1,4 @@
-CPP_FILES="io.cpp sortings.cpp main.cpp"
+CPP_FILES="after_refactoring_4.cpp"
 APP=example
 
 if [ -f $APP ]; then rm $APP
