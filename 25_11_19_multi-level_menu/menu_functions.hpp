@@ -7,12 +7,17 @@ namespace Artem {
 	
 	const MenuItem* exit(const MenuItem* current);
 	
-	const MenuItem* study_go_to_math(const MenuItem* current);
-	const MenuItem* study_go_to_alg(const MenuItem* current);
+	// Функции для алгебры
+	const MenuItem* algebra_summ(const MenuItem* current);
+	const MenuItem* algebra_substract(const MenuItem* current);
+	const MenuItem* algebra_multiply(const MenuItem* current);
+	const MenuItem* algebra_divide(const MenuItem* current);
 	
-	const MenuItem* study_summ(const MenuItem* current);
-	const MenuItem* study_substract(const MenuItem* current);
-	const MenuItem* study_multiply(const MenuItem* current);
-	const MenuItem* study_divide(const MenuItem* current);
-	const MenuItem* study_go_back(const MenuItem* current);
+	// Функции для матанализа
+	const MenuItem* calculus_derivatives(const MenuItem* current);
+	const MenuItem* calculus_integrals(const MenuItem* current);
+	const MenuItem* calculus_limits(const MenuItem* current);
+	
+	// Функции навигации
+	const MenuItem* go_back(const MenuItem* current);
 }
