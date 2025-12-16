@@ -20,5 +20,14 @@ cd %BUILD_FOLDER%
 cmake -G %BUILD_TYPE% ..\%SOURCE_FOLDER%
 cmake --build .
 
-copy ..\%SOURCE_FOLDER%\25_11_19_multi-level_menu\run_multi-level_menu.bat .\25_11_19_multi-level_menu
-copy ..\%SOURCE_FOLDER%\25_09_20_cpp_compilation\run_cpp_compilation.bat .\25_09_20_cpp_compilation
+set arr[0].file=run_multi-level_menu.bat
+set arr[1].file=run_cpp_compilation.bat
+
+set arr[0].folder=25_11_19_multi-level_menu
+set arr[1].folder=25_09_20_cpp_compilation
+
+for /L %%i in (0, 1, 2) do (
+	copy ..\%SOURCE_FOLDER%\!arr[%%i].folder!\!arr[%%i].file! .\!arr[%%i].folder!
+)
+
+copy ..\run_tests.bat .
