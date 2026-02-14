@@ -1,12 +1,10 @@
-target_sources(cpp_compilation_lib
+target_sources(bubble_sort_lib
 	PRIVATE
-		mergesort.cpp
-		mergevstav.cpp
+		bubble_sort.cpp
 	PUBLIC
-		mergesort.hpp
-		mergevstav.hpp
+		bubble_sort.hpp
 )
 
-target_include_directories(cpp_compilation_lib PUBLIC
+target_include_directories(bubble_sort_lib PUBLIC
 	"${PROJECT_SOURCE_DIR}/src"
 )

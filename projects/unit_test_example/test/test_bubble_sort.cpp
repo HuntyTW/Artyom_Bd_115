@@ -1,11 +1,11 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "cpp_compilation.hpp"
+#include "bubble_sort.hpp"
 
 TEST(ArraysEqual, AnyElementsCount) {
     std::vector<int> actual = {1, 8, 2, 5, 3, 11};
-    biv::sortings::mergevstav(actual, 0, actual.size());
+    sorting::bubbleSort(actual, 0, actual.size());
     std::vector<int> expected = {1, 3, 4, 5, 8, 11};
 
     ASSERT_EQ(expected.size(), actual.size())
