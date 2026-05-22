@@ -2,3 +2,5 @@
 #include "doubly_linked_list.cpp"
 
 template class biv::DoublyLinkedList<int>;
+
+template class biv::DoublyLinkedList<std::string>;

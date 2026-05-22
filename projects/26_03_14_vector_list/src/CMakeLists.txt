@@ -2,6 +2,8 @@ target_sources(${CONTAINERS_LIB}
 	PRIVATE
 		doubly_linked_list.cpp
 		vector.cpp
+		templates_doubly_linked_list.cpp
+		templates_vector.cpp
 	PUBLIC
 		doubly_linked_list.hpp
 		vector.hpp

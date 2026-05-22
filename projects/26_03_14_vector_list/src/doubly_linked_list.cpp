@@ -116,4 +116,4 @@ bool DoublyLinkedList<T>::remove_first(const T& value) noexcept
     return false;
 }
 
-template class biv::DoublyLinkedList<int>;
+//template class biv::DoublyLinkedList<int>;
