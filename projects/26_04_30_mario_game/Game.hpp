@@ -59,6 +59,7 @@ private:
     int m_currentLevel;
     char m_map[MAP_HEIGHT][MAP_WIDTH + 1];
     TObject m_mario;
+    float m_marioMoveX;
     int m_movingLength;
     TObject* m_movings;
     int m_score;

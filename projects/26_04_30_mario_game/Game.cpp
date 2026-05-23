@@ -9,6 +9,7 @@ Game::Game()
 : m_brickLength(0)
 , m_bricks(nullptr)
 , m_currentLevel(1)
+, m_marioMoveX(0.0f)
 , m_movingLength(0)
 , m_movings(nullptr)
 , m_score(0) {
@@ -69,6 +70,8 @@ void Game::CreateLevel(const int lvl) {
     m_brickLength = 0;
     delete[] m_bricks;
     m_bricks = nullptr;
+
+    m_marioMoveX = 0.0f;
 
     m_movingLength = 0;
     delete[] m_movings;
@@ -300,17 +303,13 @@ void Game::Run() {
         char inputChar = '\0';
 
         if (CheckInput(inputChar)) {
-
-            // Если Марио в воздухе (isFly == true), задаем скорость 2.0f (ускорение)
-            // Если на земле (isFly == false), оставляем стандартную скорость 1.0f
-            float moveSpeed = m_mario.isFly ? 2.0f : 1.0f;
-
+            // Задаем импульс движения при нажатии клавиш
             if (inputChar == 'a' || inputChar == 'A') {
-                HorizonMoveMap(moveSpeed);
+                m_marioMoveX = m_mario.isFly ? -1.4f : -1.0f; // В воздухе импульс чуть сильнее
             }
 
             if (inputChar == 'd' || inputChar == 'D') {
-                HorizonMoveMap(-moveSpeed);
+                m_marioMoveX = m_mario.isFly ? 1.4f : 1.0f;
             }
 
             if (inputChar == ' ') {
@@ -322,6 +321,18 @@ void Game::Run() {
             if (inputChar == 27) { // Код клавиши ESC в ASCII
                 isRunning = false;
             }
+        }
+
+        // ФИЗИКА ДВИЖЕНИЯ: Применяем горизонтальную скорость КАЖДЫЙ КАДР
+        if (std::abs(m_marioMoveX) > 0.05f) {
+            HorizonMoveMap(-m_marioMoveX);
+
+            // Эффект трения: на земле Марио останавливается почти сразу (коэффициент 0.40)
+            // А в воздухе (isFly) трения почти нет (0.92) — Марио плавно летит по красивой дуге!
+            float friction = m_mario.isFly ? 0.92f : 0.40f;
+            m_marioMoveX *= friction;
+        } else {
+            m_marioMoveX = 0.0f;
         }
 
         if (m_mario.y > MAP_HEIGHT) {
