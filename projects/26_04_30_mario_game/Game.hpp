@@ -5,95 +5,105 @@
 #include <cmath>
 #include <iostream>
 #include <string>
-#include <thread> // Добавлено для std::this_thread::sleep_for
+#include <thread>
+#include <vector>
 
-// Структура игрового объекта
+namespace GameConstants {
+    const char CHAR_BRICK = '#';
+    const char CHAR_COIN = '$';
+    const char CHAR_EMPTY = ' ';
+    const char CHAR_ENEMY = 'o';
+    const char CHAR_FINISH = '+';
+    const char CHAR_MARIO = '@';
+    const char CHAR_MYSTERY = '?';
+    const char CHAR_USED = '-';
+
+    constexpr float SPEED_BOUNCE = -0.7f;
+    constexpr float SPEED_GRAVITY = 0.05f;
+    constexpr float SPEED_HORIZ = 0.2f;
+    constexpr float SPEED_JUMP = -1.25f;
+
+    const int MAP_HEIGHT = 25;
+    const int MAP_WIDTH = 80;
+    const int MAX_LEVEL = 3;
+    const int SCORE_COIN = 100;
+    const int SCORE_ENEMY = 50;
+}
+
 struct TObject {
-    float x;
-    float y;
-    float width;
-    float height;
-    float vertSpeed;
+    float x, y, width, height;
+    float vertSpeed, horizSpeed;
     bool isFly;
     char cType;
-    float horizSpeed;
 };
 
-// Класс управления игрой и рендерингом (ООП)
-class Game {
+class GameState {
 public:
-    // Константы типов объектов
-    static const char CHAR_BRICK = '#';
-    static const char CHAR_COIN = '$';
-    static const char CHAR_EMPTY = ' ';
-    static const char CHAR_ENEMY = 'o';
-    static const char CHAR_FINISH = '+';
-    static const char CHAR_MARIO = '@';
-    static const char CHAR_MYSTERY = '?';
-    static const char CHAR_USED = '-';
+    int score;
+    int currentLevel;
+    bool isRunning;
+    bool isDead;
+    bool levelComplete;
+    float marioMoveX;
 
-    // Константы физики и логики
-    static constexpr float SPEED_BOUNCE = -0.7f;
-    static constexpr float SPEED_GRAVITY = 0.05f;
-    static constexpr float SPEED_HORIZ = 0.2f;
-    static constexpr float SPEED_JUMP = -1.25f; // Было -1.0f. Сделали прыжок выше
+    TObject mario;
+    std::vector<TObject> bricks;
+    std::vector<TObject> movings;
 
-    // Константы окружения
-    static const int MAP_HEIGHT = 25;
-    static const int MAP_WIDTH = 80;
-    static const int MAX_LEVEL = 3;
-    static const int SCORE_COIN = 100;
-    static const int SCORE_ENEMY = 50;
-    static const int TIME_SLEEP_MS = 10;
-    static const int TIME_SLEEP_DEATH_MS = 500;
+    GameState();
+    void ResetForNewLevel();
+};
 
-    Game();
-    ~Game();
-
-    void Run();
-
+class GameMap {
 private:
-    // Поля класса (Инкапсуляция данных)
-    int m_brickLength;
-    TObject* m_bricks;
-    int m_currentLevel;
-    char m_map[MAP_HEIGHT][MAP_WIDTH + 1];
-    TObject m_mario;
-    float m_marioMoveX;
-    int m_movingLength;
-    TObject* m_movings;
-    int m_score;
+    char m_grid[GameConstants::MAP_HEIGHT][GameConstants::MAP_WIDTH + 1];
+public:
+    void Clear();
+    void PutObject(const TObject& obj);
+    void PutScore(int score);
+    const char* GetRow(int index) const;
+};
 
-    // Внутренние методы управления памятью и уровнем
-    TObject* AddBrick();
-    TObject* AddMoving();
-    void ClearMap();
-    void CreateLevel(const int lvl);
-    void DeleteMoving(const int i);
-
-    // Внутренние методы перемещения и коллизий
-    void HorizonMoveMap(const float dx);
-    void HorizonMoveObject(TObject* obj);
-    void InitObject(TObject* obj, const float xPos, const float yPos, const float oWidth, const float oHeight, const char inType);
-    bool IsCollision(const TObject o1, const TObject o2) const;
-    bool IsPosInMap(const int x, const int y) const;
-    void MarioCollision();
-    void PlayerDead();
-    void VertMoveObject(TObject* obj);
-    void SetObjectPos(TObject* obj, const float xPos, const float yPos); // Добавлено объявление метода
-
-    // Методы отрисовки и вывода на экран
-    void PutObjectOnMap(const TObject obj);
-    void PutScoreOnMap();
-    void ShowMap() const;
+class Renderer {
+public:
+    void ShowMap(const GameMap& map) const;
     void ShowMenu() const;
-
-    // Специфичные для Linux утилиты
-    void SetCursor(const int x, const int y) const;
-    void SetTerminalColor(const std::string& colorCode) const;
+    void SetCursor(int x, int y) const;
+    void SetColor(const std::string& colorCode) const;
     void ClearTerminal() const;
-    void SleepMs(const int ms) const;
-    bool CheckInput(char& outChar) const;
+};
+
+class PhysicsEngine {
+public:
+    void VertMoveObject(TObject& obj, GameState& state);
+    void HorizonMoveObject(TObject& obj, GameState& state);
+    void HorizonMoveMap(GameState& state, float dx);
+    void CheckMarioCollisions(GameState& state);
+private:
+    bool IsCollision(const TObject& o1, const TObject& o2) const;
+};
+
+class LevelBuilder {
+public:
+    void CreateLevel(int lvl, GameState& state);
+private:
+    void SpawnObject(std::vector<TObject>& list, float x, float y, float w, float h, char type);
+};
+
+class InputHandler {
+public:
+    static bool CheckInput(char& outChar);
+};
+
+class Game {
+private:
+    GameState m_state;
+    GameMap m_map;
+    Renderer m_renderer;
+    PhysicsEngine m_physics;
+    LevelBuilder m_builder;
+public:
+    void Run();
 };
 
 #endif // GAME_HPP
