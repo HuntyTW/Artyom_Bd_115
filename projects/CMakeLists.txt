@@ -6,6 +6,6 @@ enable_testing()
 add_subdirectory(lib/googletest)
 
 add_subdirectory(2026_02_14_long_numbers)
-add_subdirectory(26_03_14_vector_list)
+#add_subdirectory(26_03_14_vector_list)
 
 set(CMAKE_SUPPRESS_REGENERATION true)
