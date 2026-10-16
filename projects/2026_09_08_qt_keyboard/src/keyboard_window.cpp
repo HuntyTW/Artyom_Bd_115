@@ -123,8 +123,29 @@ int KeyBoardWindow::get_key_code(const QKeyEvent* event) const {
 		case Qt::Key_Space:
 			return KeyBoardData::SPACE_CODE;
 		default:
-			return event->nativeVirtualKey();
+			break;
 	}
+
+#ifdef Q_OS_WIN
+	return event->nativeVirtualKey();
+#else
+	// Linux (X11 и Wayland): nativeScanCode - это код evdev, увеличенный на 8.
+	// Он не зависит от раскладки, поэтому русская и английская раскладки
+	// работают одинаково.
+	const int code = KeyBoardData::get_code_by_evdev(
+		static_cast<int>(event->nativeScanCode()) - 8
+	);
+	if (code != -1) {
+		return code;
+	}
+
+	// Запасной вариант: коды латинских букв и цифр в Qt совпадают с Virtual-Key
+	const int key = event->key();
+	if ((key >= Qt::Key_A && key <= Qt::Key_Z) || (key >= Qt::Key_0 && key <= Qt::Key_9)) {
+		return key;
+	}
+	return -1;
+#endif
 }
 
 void KeyBoardWindow::update_mood() {

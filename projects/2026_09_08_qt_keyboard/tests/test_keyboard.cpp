@@ -98,6 +98,27 @@ class TestKeyBoard : public QObject {
 			QCOMPARE(text_of(&window), QString("Й1 "));
 		}
 
+#ifndef Q_OS_WIN
+		// Linux: клавиша определяется по scancode (evdev + 8), а не по символу,
+		// поэтому при русской раскладке результат тот же.
+		void physical_keys_by_scancode_on_linux() {
+			KeyBoardWindow window;
+			window.show();
+
+			auto press_scancode = [&](const int qt_key, const int evdev, const QString& text) {
+				QKeyEvent event(QEvent::KeyPress, qt_key, Qt::NoModifier, evdev + 8, 0, 0, text);
+				QApplication::sendEvent(&window, &event);
+			};
+
+			press_scancode(0x419, 16, "й");           // русская раскладка, клавиша Q
+			press_scancode(Qt::Key_Q, 16, "q");       // английская раскладка, клавиша Q
+			press_scancode(Qt::Key_Period, 52, ".");   // клавиша "Ю"
+			press_scancode(Qt::Key_Period, 53, ".");   // клавиша "." (русская раскладка)
+			press_scancode(Qt::Key_5, 6, "5");
+			QCOMPARE(text_of(&window), QString("ЙЙЮ.5"));
+		}
+#endif
+
 		void physical_key_presses_each_time_even_when_fast() {
 			KeyBoardWindow window;
 			window.show();
